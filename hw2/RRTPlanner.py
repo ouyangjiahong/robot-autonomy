@@ -34,9 +34,13 @@ class RRTPlanner(object):
             if qc is not None:
                 qc_id = tree.AddVertex(qc)
                 tree.AddEdge(qn_id,qc_id)
+                dist = self.planning_env.ComputeDistance(qc, goal_config)
                 #plan.append(qc)
                 # self.planning_env.PlotEdge(qn,qc)
-                if ((qr==goal_config).all() and reached):
+                # if ((qr==goal_config).all() and reached):
+                #     goal_id = qc_id
+                #     break
+                if dist <= epsilon and reached:
                     goal_id = qc_id
                     break
 
