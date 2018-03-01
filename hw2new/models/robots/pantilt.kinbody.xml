@@ -1,0 +1,54 @@
+
+<KinBody name="pantilt">
+
+
+ <Body name="pan" type="dynamic" >
+    <offsetfrom>herb_base</offsetfrom>
+    <Translation>0.0 0 0</Translation>
+    <RotationMat>1 0 0 0 1 0 0 0 1</RotationMat>
+    <Geom type="trimesh">
+      <Translation>0 0 0</Translation>
+      <data>emptyModel.iv</data>
+      <Render>herb-pan.iv</Render>
+    </Geom>
+  </Body>
+
+  <Body name="tilt" type="dynamic" >
+    <offsetfrom>pan</offsetfrom>
+    <Translation>0.00 0 0</Translation>
+    <RotationMat>1 0 0 0 1 0 0 0 1</RotationMat>
+    <Geom type="trimesh">
+      <Translation>0 0 0</Translation>
+      <Render>herb-tilt.iv</Render>
+      <data>emptyModel.iv</data>
+    </Geom>
+  </Body>
+
+  <Joint type="hinge" name="Joint_Pan">
+    <Body>herb_base</Body>
+    <Body>pan</Body>
+    <offsetfrom>herb_base</offsetfrom>
+    <Anchor>-.219 0.0 1.273</Anchor>
+    <Axis>0 0 1</Axis>
+    <limitsdeg>-120  150</limitsdeg>
+    <weight>4</weight>
+    <resolution>1</resolution>
+  </Joint>
+
+  <Joint name="Joint_Tilt" type="hinge">
+    <Body>pan</Body>
+    <Body>tilt</Body>
+    <offsetfrom>pan</offsetfrom>
+    <Anchor>-.219 0.0 1.273</Anchor>
+    <Axis>0 1 0</Axis>
+    <limitsdeg>-74 77</limitsdeg>
+    <weight>4</weight>
+    <maxvel>1</maxvel>
+    <resolution>1</resolution>
+  </Joint>
+
+  <adjacent>herb_base tilt</adjacent>
+  <adjacent>herb_base pan</adjacent>
+  <adjacent>tilt pan</adjacent>
+
+</KinBody>

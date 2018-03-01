@@ -1,0 +1,39 @@
+
+<KinBody name="herb_base">
+  <Body name="herb_base" type="dynamic"> 
+    <Geom type="trimesh">
+      <Translation>0 0 0</Translation>
+      <Data>herb_base_collision.iv</Data>
+      <Render>herb_base.iv</Render>
+    </Geom>
+
+    <Geom name="headpad" type="sphere" render="false">
+	<translation>-.219 0.0 1.273</translation>
+        <radius>0.175</radius>
+        <diffuseColor>0 .2 .5</diffuseColor>
+    </Geom>
+
+
+    <Geom name="basepad" type="box" render="false">
+       <translation>-0.071 0.0 0.354</translation>
+
+       <!-- unpadded info
+       <extents>0.322 0.20 0.20</extents>   -->
+       
+       <extents>0.347 0.225 0.225</extents> 
+
+     </Geom>
+
+
+    <Geom name="wheelpad" type="cylinder" render="false">
+      <translation>0.0 0.0 0.23</translation>
+
+      <!-- unpadded info
+      <radius>0.23</radius>
+      <height>0.63</height> -->
+
+      <radius>0.254</radius>
+      <height>0.654</height>
+    </Geom>
+   </Body>
+</KinBody>
