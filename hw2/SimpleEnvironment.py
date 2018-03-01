@@ -44,7 +44,6 @@ class SimpleEnvironment(object):
             Returns: flag is true if there is a collision
 
         """
-
         tr = self.robot.GetTransform()
         trnew = tr.copy()
         trnew[0][3] = config[0]
@@ -102,6 +101,8 @@ class SimpleEnvironment(object):
         # print path
         # print len(path)
         # print path
+        print 'original path length: '
+        print len(path)
         while not numpy.array_equal(path, short_path):
             short_path = copy.deepcopy(path)
             for i in xrange(len(short_path)):
@@ -133,6 +134,8 @@ class SimpleEnvironment(object):
                 # print short_path
             path = short_path
             # print len(short_path)
+            print 'length after shortening: '
+            print len(short_path)
         # print short_path
 
         return short_path

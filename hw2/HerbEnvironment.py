@@ -101,12 +101,13 @@ class HerbEnvironment(object):
         #  on the given path.  Terminate the shortening after the
         #  given timout (in seconds).
         #
-        return path
+        # return path
         start = end = time.time()
         path = list(path)
         short_path = []
         # print path
-        # print len(path)
+        print 'original path length: '
+        print len(path)
         # print path
         while not numpy.array_equal(path, short_path):
             short_path = copy.deepcopy(path)
@@ -138,7 +139,9 @@ class HerbEnvironment(object):
                         break
                 # print short_path
             path = short_path
-            # print len(short_path)
+            print 'length after shortening: '
+            print len(short_path)
+
         # print short_path
 
         return short_path
