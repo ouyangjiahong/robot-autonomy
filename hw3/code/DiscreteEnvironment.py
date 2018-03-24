@@ -27,6 +27,8 @@ class DiscreteEnvironment(object):
         # space to a node in discrete space
         #
         node_id = 0
+        coord = self.ConfigurationToGridCoord(config)
+        node_id = self.GridCoordToNodeId(coord)
         return node_id
 
     def NodeIdToConfiguration(self, nid):
@@ -36,6 +38,8 @@ class DiscreteEnvironment(object):
         # in the full configuration space
         #
         config = [0] * self.dimension
+        coord = self.NodeIdToGridCoord(nid)
+        config = self.GridCoordToConfiguration(coord)
         return config
         
     def ConfigurationToGridCoord(self, config):
@@ -45,6 +49,8 @@ class DiscreteEnvironment(object):
         # to a grid coordinate in discrete space
         #
         coord = [0] * self.dimension
+        for i in range(self.dimension):
+        	coord[i] = int((config[i]-self.lower_limits[i])/self.resolution)
         return coord
 
     def GridCoordToConfiguration(self, coord):
@@ -54,6 +60,8 @@ class DiscreteEnvironment(object):
         # to a configuration in the full configuration space
         #
         config = [0] * self.dimension
+        for i in range(self.dimension):
+        	config[i] = self.resolution/2 + coord[i]*self.resolution + self.lower_limits[i]
         return config
 
     def GridCoordToNodeId(self,coord):
@@ -62,6 +70,12 @@ class DiscreteEnvironment(object):
         # This function maps a grid coordinate to the associated
         # node id 
         node_id = 0
+        # for i in range(self.dimension):
+        # 	tmp = 1
+        # 	for j in range(i+1, self.dimension):
+        # 		tmp *= self.num_cells[j]
+        # 	node_id = coord[i] * tmp
+        node_id = numpy.ravel_multi_index(coord, self.num_cells, order='F')
         return node_id
 
     def NodeIdToGridCoord(self, node_id):
@@ -70,6 +84,7 @@ class DiscreteEnvironment(object):
         # This function maps a node id to the associated
         # grid coordinate
         coord = [0] * self.dimension
+        coord = numpy.unravel_index(node_id, self.num_cells, order='F')
         return coord
         
         
