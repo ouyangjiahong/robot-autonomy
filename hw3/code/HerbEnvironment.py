@@ -83,15 +83,14 @@ class HerbEnvironment(object):
         # TODO: Here you will implement a function that
         # computes the distance between the configurations given
         # by the two node ids
-            # Start position in the configuration space
-            start_config = self.discrete_env.NodeIdToConfiguration(start_id)
-            # End position in the configuration space
-            end_config = self.discrete_env.NodeIdToConfiguration(end_id)
-            # The change in each dimension in the configuration space
-            dist_config = numpy.array(start_config) - numpy.array(end_config)
-            # The total distance
-            dist = numpy.linalg.norm(dist_config)
-            return dist
+        # Start position in the configuration space
+        start_config = self.discrete_env.NodeIdToConfiguration(start_id)
+        # End position in the configuration space
+        end_config = self.discrete_env.NodeIdToConfiguration(end_id)
+        # The change in each dimension in the configuration space
+        dist_config = numpy.array(start_config) - numpy.array(end_config)
+        # The total distance
+        dist = numpy.linalg.norm(dist_config)
         return dist
 
     def ComputeHeuristicCost(self, start_id, goal_id):

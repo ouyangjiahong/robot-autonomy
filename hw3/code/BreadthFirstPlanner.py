@@ -1,52 +1,56 @@
-import pdb
-import numpy
+import numpy as np
 
-class BreadthFirstPlanner(object): 
-
+class BreadthFirstPlanner(object):
+    
     def __init__(self, planning_env, visualize):
         self.planning_env = planning_env
         self.visualize = visualize
-
+        
     def Plan(self, start_config, goal_config):
-        # TODO: Here you will implement the depth first planner
+        
+        plan = []
+        
+        # TODO: Here you will implement the breadth first planner
         #  The return path should be a numpy array
         #  of dimension k x n where k is the number of waypoints
         #  and n is the dimension of the robots configuration space
-
-        plan = []
-        explored = []
-        queue = []
-        if self.visualize and hasattr(self.planning_env, 'InitializePlot'):
+        start_id = self.planning_env.discrete_env.ConfigurationToNodeId(start_config)
+        goal_id = self.planning_env.discrete_env.ConfigurationToNodeId(goal_config)
+        plot = self.visualize and hasattr(self.planning_env, 'InitializePlot')
+        print("Plot: ",plot)
+        if plot:
             self.planning_env.InitializePlot(goal_config)
+        found = False
+        tovisit = []
+        visited = []
+        parent = {}
+        tovisit.append(start_id)
+        while True:
+            if len(tovisit)==0:
+                print("No Path Found")
+                break
+            curr = tovisit.pop(0)
+            #print("Visiting Node: ",curr)
+            if curr == goal_id:
+                found=True
+                print("Path Found")
+                break
+            visited.append(curr)
+            succ = self.planning_env.GetSuccessors(curr)
+            for s in succ:
+                if s not in visited and s not in tovisit:
+                    tovisit.append(s)
+                    parent[s] = curr
 
-        print "Printing start!!"
-        print start_config
-
-        queue.append([list(start_config)])
-        while queue:
-            path = queue.pop(0)
-            node = path[-1]
-            print "path:", path
-            print "node:", node
-            if node not in explored:
-                neighbours = self.planning_env.GetSuccessors(self.planning_env.discrete_env.ConfigurationToNodeId(node))
-                for neighbour in neighbours:
-                    neighbour = self.planning_env.discrete_env.NodeIdToConfiguration(neighbour)
-                    plan = [list(path)]
-                    plan.append(neighbour)
-                    queue.append(plan)
-                    #pdb.set_trace()
-                    print "Printing, Node", node
-                    print "Printing, Neighbour", neighbour
-                    print "Printing, All Neighbours", neighbours
-                    self.planning_env.PlotEdge(node, neighbour)
-                    if (numpy.array(neighbour) == goal_config).all():
-                        print "Returning the Planned Path!!!"
-                        return plan
-                explored.append(node)
-                #pdb.set_trace()
-        print "Path Not found!!"
-        plan = []
-        plan.append(start_config)
-        plan.append(goal_config)
+                    if plot:
+                        c1 = self.planning_env.discrete_env.NodeIdToConfiguration(curr)
+                        c2 = self.planning_env.discrete_env.NodeIdToConfiguration(s)
+                        self.planning_env.PlotEdge(c1,c2)
+        if found:
+            n = goal_id
+            while n in parent.keys():
+                plan.append(self.planning_env.discrete_env.NodeIdToConfiguration(n))
+                n = parent[n]
+            plan.append(start_config)
+   
         return plan
