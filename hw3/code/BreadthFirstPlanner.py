@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 class BreadthFirstPlanner(object):
     
@@ -17,7 +18,7 @@ class BreadthFirstPlanner(object):
         start_id = self.planning_env.discrete_env.ConfigurationToNodeId(start_config)
         goal_id = self.planning_env.discrete_env.ConfigurationToNodeId(goal_config)
         plot = self.visualize and hasattr(self.planning_env, 'InitializePlot')
-        print("Plot: ",plot)
+
         if plot:
             self.planning_env.InitializePlot(goal_config)
         found = False
@@ -46,11 +47,17 @@ class BreadthFirstPlanner(object):
                         c1 = self.planning_env.discrete_env.NodeIdToConfiguration(curr)
                         c2 = self.planning_env.discrete_env.NodeIdToConfiguration(s)
                         self.planning_env.PlotEdge(c1,c2)
+
         if found:
             n = goal_id
             while n in parent.keys():
                 plan.append(self.planning_env.discrete_env.NodeIdToConfiguration(n))
                 n = parent[n]
             plan.append(start_config)
-   
+        plan = plan[::-1]
+        #print("Plan: ",plan)
+        if plot:
+            for j in range(len(plan)-1):
+                self.planning_env.PlotEdge(plan[j],plan[j+1])
+
         return plan
