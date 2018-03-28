@@ -45,7 +45,7 @@ class DepthFirstPlanner(object):
                     if plot:
                         c1 = self.planning_env.discrete_env.NodeIdToConfiguration(curr)
                         c2 = self.planning_env.discrete_env.NodeIdToConfiguration(s)
-                        self.planning_env.PlotEdge(c1,c2)
+                        #self.planning_env.PlotEdge(c1,c2)
 
         if found:
             n = goal_id

@@ -29,7 +29,7 @@ class SimpleEnvironment(object):
         #  and return a list of node_ids that represent the neighboring
         #  nodes
         # Change to True to generate all 8 points instead of just 4
-        all_eight_points = True
+        all_eight_points = False
         # X or Y distance to move in a single step
         delta = self.discrete_env.resolution
         # Get the limits
@@ -155,4 +155,4 @@ class SimpleEnvironment(object):
                 [sconfig[1], econfig[1]],
                 'k.-', linewidth=2.5)
         pl.draw()
-        pl.pause(0.1)
+        pl.pause(0.01)
