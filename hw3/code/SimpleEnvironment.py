@@ -62,7 +62,7 @@ class SimpleEnvironment(object):
             bottom_left_id  = self.discrete_env.ConfigurationToNodeId(bottom_left_coord)
             bottom_right_id = self.discrete_env.ConfigurationToNodeId(bottom_right_coord)
         # If it's below the top limit, add the top node
-        if top_coord[1] < top_limit:
+        if top_coord[1] < top_limit and not self.is_colliding(top_coord):
             successors.append(top_id)
             # Check and optionally add the two optional top nodes
             if all_eight_points:
@@ -71,13 +71,13 @@ class SimpleEnvironment(object):
                 if right_coord[0] < right_limit:
                     successors.append(top_right_id)
         # If it's to the right of the left limit add the left node
-        if left_coord[0] > left_limit:
+        if left_coord[0] > left_limit and not self.is_colliding(left_coord):
             successors.append(left_id)
         # If it's to the left of the right limit add the right node
-        if right_coord[0] < right_limit:
+        if right_coord[0] < right_limit and not self.is_colliding(right_coord):
             successors.append(right_id)
         # If it's above the bottom limit add the bottom node
-        if bottom_coord[1] > bottom_limit:
+        if bottom_coord[1] > bottom_limit and not self.is_colliding(bottom_coord):
             successors.append(bottom_id)
             # Check and optionally add the two optional bottom nodes
             if all_eight_points:
@@ -86,9 +86,14 @@ class SimpleEnvironment(object):
                 if right_coord[0] < right_limit:
                     successors.append(bottom_right_id)
         # variable = raw_input('Any key to continue: ')
-
         return successors
 
+    def is_colliding(self,cfg):
+        trans = self.robot.GetTransform()
+        trans[0][3] = cfg[0]
+        trans[1][3] = cfg[1]
+        self.robot.SetTransform(trans)
+        return self.robot.GetEnv().CheckCollision(self.robot)
     def ComputeDistance(self, start_id, end_id):
         # TODO: Here you will implement a function that
         # computes the distance between the configurations given
