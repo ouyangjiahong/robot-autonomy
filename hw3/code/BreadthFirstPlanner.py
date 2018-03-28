@@ -1,6 +1,3 @@
-import numpy as np
-import time
-
 class BreadthFirstPlanner(object):
     
     def __init__(self, planning_env, visualize):
