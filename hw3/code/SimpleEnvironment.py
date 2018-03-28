@@ -30,15 +30,15 @@ class SimpleEnvironment(object):
         #  nodes
         # Change to True to generate all 8 points instead of just 4
         all_eight_points = False
-        # Get the limits
-        top_limit = self.upper_limits[1]
-        bottom_limit = self.lower_limits[1]
-        left_limit = self.lower_limits[0]
-        right_limit = self.upper_limits[0]
-        # Coordinates of the node
-        coord = self.discrete_env.NodeIdToConfiguration(node_id)
         # X or Y distance to move in a single step
         delta = self.discrete_env.resolution
+        # Get the limits
+        top_limit = self.upper_limits[1] - delta
+        bottom_limit = self.lower_limits[1] + delta
+        left_limit = self.lower_limits[0] + delta
+        right_limit = self.upper_limits[0] - delta
+        # Coordinates of the node
+        coord = self.discrete_env.NodeIdToConfiguration(node_id)
         # The four coordinates to consider moving to
         top_coord    = [coord[0], coord[1] + delta]
         bottom_coord = [coord[0], coord[1] - delta]
