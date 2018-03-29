@@ -155,4 +155,4 @@ class SimpleEnvironment(object):
                 [sconfig[1], econfig[1]],
                 'k.-', linewidth=2.5)
         pl.draw()
-        pl.pause(0.01)
+        #pl.pause(0.01)

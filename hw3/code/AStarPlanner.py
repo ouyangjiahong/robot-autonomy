@@ -35,7 +35,6 @@ class AStarPlanner(object):
                 print("No Path Found")
                 break
             curr = heappop(tovisit)[1]
-            #print("Visiting Node: ",curr)
             if curr == goal_id:
                 found=True
                 print("Path Found")
@@ -43,25 +42,25 @@ class AStarPlanner(object):
             visited.append(curr)
             succ = self.planning_env.GetSuccessors(curr)
             for s in succ:
-                if s not in visited: # resolve both cases now
-                    #tovisit.append(s)
-                    parent[s] = curr
+                if s not in visited:
                     c2c_tentative = c2c[curr] + self.planning_env.ComputeDistance(s,curr)
                     l = [h[1] for h in tovisit]
-                    if s in l:
+                    if s in l: # already exists in tovisit, but new path might be better
                         idx = l.index(s)
                         if c2c[s] > c2c_tentative: # new path is better
+                            parent[s] = curr
                             c2c[s] = c2c_tentative
                             tovisit[idx] = (c2c[s]+self.planning_env.ComputeHeuristicCost(s,goal_id),s)
                             heapify(tovisit)
                     else:
+                        parent[s] = curr
                         c2c[s] = c2c_tentative
                         heappush(tovisit,(c2c[s]+self.planning_env.ComputeHeuristicCost(s,goal_id),s))
 
                     if plot:
                         c1 = self.planning_env.discrete_env.NodeIdToConfiguration(curr)
                         c2 = self.planning_env.discrete_env.NodeIdToConfiguration(s)
-                        self.planning_env.PlotEdge(c1,c2)
+                        #self.planning_env.PlotEdge(c1,c2)
 
         if found:
             n = goal_id
