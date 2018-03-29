@@ -1,5 +1,5 @@
 from heapq import *
-
+import time
 class AStarPlanner(object):
     
     def __init__(self, planning_env, visualize):
@@ -9,7 +9,7 @@ class AStarPlanner(object):
 
 
     def Plan(self, start_config, goal_config):
-
+        t1 = time.time()
         plan = []
         
         # TODO: Here you will implement the AStar planner
@@ -28,6 +28,7 @@ class AStarPlanner(object):
         parent = {}
         c2c = {}
         c2c[start_id] = 0
+        numexpand = 0
         #tovisit.append(start_id)
         heappush(tovisit,(0+self.planning_env.ComputeHeuristicCost(start_id,goal_id),start_id))
         while True:
@@ -35,6 +36,7 @@ class AStarPlanner(object):
                 print("No Path Found")
                 break
             curr = heappop(tovisit)[1]
+            numexpand = numexpand + 1
             if curr == goal_id:
                 found=True
                 print("Path Found")
@@ -72,6 +74,11 @@ class AStarPlanner(object):
         #print("Plan: ",plan)
         if plot:
             for j in range(len(plan)-1):
-                self.planning_env.PlotEdge(plan[j],plan[j+1])
+                self.planning_env.PlotEdge(plan[j],plan[j+1],'r.-')
+
+        t2 = time.time()
+        print("Time Taken for Planning: ",t2-t1)
+        print("Path Length: ",len(plan))
+        print("Number of Nodes Expanded: ",numexpand)
 
         return plan

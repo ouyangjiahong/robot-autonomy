@@ -1,3 +1,5 @@
+import time
+
 class DepthFirstPlanner(object):
     
     def __init__(self, planning_env, visualize):
@@ -6,7 +8,7 @@ class DepthFirstPlanner(object):
         self.nodes = dict()
 
     def Plan(self, start_config, goal_config):
-        
+        t1 = time.time()
         plan = []
         
         # TODO: Here you will implement the depth first planner
@@ -17,7 +19,7 @@ class DepthFirstPlanner(object):
         start_id = self.planning_env.discrete_env.ConfigurationToNodeId(start_config)
         goal_id = self.planning_env.discrete_env.ConfigurationToNodeId(goal_config)
         plot = self.visualize and hasattr(self.planning_env, 'InitializePlot')
-
+        numexpand = 0
         if plot:
             self.planning_env.InitializePlot(goal_config)
         found = False
@@ -30,6 +32,7 @@ class DepthFirstPlanner(object):
                 print("No Path Found")
                 break
             curr = tovisit.pop()
+            numexpand = numexpand + 1
             #print("Visiting Node: ",curr)
             if curr == goal_id:
                 found=True
@@ -57,6 +60,9 @@ class DepthFirstPlanner(object):
         #print("Plan: ",plan)
         if plot:
             for j in range(len(plan)-1):
-                self.planning_env.PlotEdge(plan[j],plan[j+1])
-
+                self.planning_env.PlotEdge(plan[j],plan[j+1],'r.-')
+        t2 = time.time()
+        print("Time Taken for Planning: ",t2-t1)
+        print("Path Length: ",len(plan))
+        print("Number of Nodes Expanded: ",numexpand)
         return plan

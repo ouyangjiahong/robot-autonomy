@@ -1,3 +1,5 @@
+import time
+
 class BreadthFirstPlanner(object):
     
     def __init__(self, planning_env, visualize):
@@ -5,7 +7,7 @@ class BreadthFirstPlanner(object):
         self.visualize = visualize
         
     def Plan(self, start_config, goal_config):
-        
+        t1 =  time.time()
         plan = []
         
         # TODO: Here you will implement the breadth first planner
@@ -15,7 +17,7 @@ class BreadthFirstPlanner(object):
         start_id = self.planning_env.discrete_env.ConfigurationToNodeId(start_config)
         goal_id = self.planning_env.discrete_env.ConfigurationToNodeId(goal_config)
         plot = self.visualize and hasattr(self.planning_env, 'InitializePlot')
-
+        numexpand = 0
         if plot:
             self.planning_env.InitializePlot(goal_config)
         found = False
@@ -28,6 +30,7 @@ class BreadthFirstPlanner(object):
                 print("No Path Found")
                 break
             curr = tovisit.pop(0)
+            numexpand = numexpand + 1
             #print("Visiting Node: ",curr)
             if curr == goal_id:
                 found=True
@@ -55,6 +58,10 @@ class BreadthFirstPlanner(object):
         #print("Plan: ",plan)
         if plot:
             for j in range(len(plan)-1):
-                self.planning_env.PlotEdge(plan[j],plan[j+1])
+                self.planning_env.PlotEdge(plan[j],plan[j+1],'r.-')
+        t2 = time.time()
+        print("Time Taken for Planning: ",t2-t1)
+        print("Path Length: ",len(plan))
+        print("Number of Nodes Expanded: ",numexpand)
 
         return plan

@@ -1,5 +1,6 @@
 import numpy
 from RRTTree import RRTTree
+import time
 
 class HeuristicRRTPlanner(object):
 
@@ -8,7 +9,7 @@ class HeuristicRRTPlanner(object):
         self.visualize = visualize
         
     def Plan(self, start_config, goal_config, epsilon = 0.001):
-        
+        t1 =  time.time()
         tree = RRTTree(self.planning_env, start_config)
         plan = []
         plot = self.visualize and hasattr(self.planning_env, 'InitializePlot')
@@ -25,7 +26,6 @@ class HeuristicRRTPlanner(object):
         c2c[start_id] = copt
         cmax = copt
         self.planning_env.SetGoalParameters(goal_config)
-
         while True:
             while True:
                 if numpy.random.rand()>self.planning_env.p:
@@ -69,4 +69,7 @@ class HeuristicRRTPlanner(object):
             for j in range(len(plan)-1):
                 self.planning_env.PlotEdge(plan[j],plan[j+1],color='r.-')
 
+        t2 = time.time()
+        print("Time Taken for Planning: ",t2-t1)
+        print("Path Length: ",len(plan))
         return plan
