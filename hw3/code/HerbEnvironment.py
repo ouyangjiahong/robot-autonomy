@@ -78,7 +78,7 @@ class HerbEnvironment(object):
         is_in_bounds = lower_bound and upper_bound
         return is_not_colliding and is_in_bounds
 
-    def ComputeDistanceConfig(self, start_id, end_id):
+    def ComputeDistance(self, start_id, end_id):
 
         dist = 0
 
@@ -102,7 +102,7 @@ class HerbEnvironment(object):
         # TODO: Here you will implement a function that
         # computes the heuristic cost between the configurations
         # given by the two node ids
-        cost = self.ComputeDistanceConfig(start_id,goal_id)
+        cost = self.ComputeDistance(start_id,goal_id)
 
         return cost
 
