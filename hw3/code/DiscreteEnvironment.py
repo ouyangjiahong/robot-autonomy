@@ -58,11 +58,10 @@ class DiscreteEnvironment(object):
         # to a grid coordinate in discrete space
         #
         coord = [0] * self.dimension
-        for idx in range(self.dimension):
-            #Peter:
-            #the coord should start from 0 to coord_cells[idx] -1 , right?
-            coord[idx] = numpy.floor((config[idx]-self.lower_limits[idx])/self.resolution)
+        for i in range(self.dimension):
+        	coord[i] = int((config[i]-self.lower_limits[i])/self.resolution)
         return coord
+
 
     def GridCoordToConfiguration(self, coord):
 
