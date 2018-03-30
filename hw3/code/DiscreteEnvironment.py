@@ -1,5 +1,4 @@
 import numpy
-
 class DiscreteEnvironment(object):
 
     def __init__(self, resolution, lower_limits, upper_limits):
@@ -19,6 +18,17 @@ class DiscreteEnvironment(object):
         for idx in range(self.dimension):
             self.num_cells[idx] = numpy.ceil((upper_limits[idx] - lower_limits[idx])/self.resolution)
         #print "num_cells=",self.num_cells
+    def ConfigurationToNodeId(self, config):
+
+        # TODO:
+        # This function maps a node configuration in full configuration
+        # space to a node in discrete space
+        #
+        node_id = 0
+        coord = self.ConfigurationToGridCoord(config)
+        node_id = self.GridCoordToNodeId(coord)
+        return node_id
+
     def NodeIdToConfiguration(self, nid):
 
         # TODO:
@@ -26,17 +36,20 @@ class DiscreteEnvironment(object):
         # in the full configuration space
         #
         config = [0] * self.dimension
-        config = self.GridCoordToConfiguration(self.NodeIdToGridCoord(nid))
+        coord = self.NodeIdToGridCoord(nid)
+        config = self.GridCoordToConfiguration(coord)
         return config
 
-    def ConfigurationToNodeId(self, config):
+    def ConfigurationToGridCoord(self, config):
 
         # TODO:
-        # This function maps a node configuration in full configuration
-        # space to a node in discrete space
-
-        node_id = self.GridCoordToNodeId(self.ConfigurationToGridCoord(config))
-        return node_id
+        # This function maps a configuration in the full configuration space
+        # to a grid coordinate in discrete space
+        #
+        coord = [0] * self.dimension
+        for i in range(self.dimension):
+        	coord[i] = int((config[i]-self.lower_limits[i])/self.resolution)
+        return coord
 
     def ConfigurationToGridCoord(self, config):
 
@@ -58,13 +71,11 @@ class DiscreteEnvironment(object):
         # to a configuration in the full configuration space
         #
         config = [0] * self.dimension
-        for idx in range(self.dimension):
-            #Peter to prevent is over the upper limit
-            if  (coord[idx] >= (self.num_cells[idx]-1)):
-                config[idx] = (self.lower_limits[idx] + coord[idx]* self.resolution+self.upper_limits[idx])/2
+        for i in range(self.dimension):
+            if  (coord[i] >= self.num_cells[i]-1):
+                config[i] = self.upper_limits[i] - self.lower_limits[i]
             else:
-                config[idx] = self.lower_limits[idx] + coord[idx]* self.resolution + self.resolution/2
-            assert(coord[idx] < self.num_cells[idx])
+                config[i] =  self.lower_limits[i] + coord[i] * self.resolution + self.resolution / 2
         return config
 
     def GridCoordToNodeId(self,coord):
