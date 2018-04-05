@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Robot name="Herb2">
+   
+  <KinBody>
+    <KinBody file="herb_base.kinbody.xml"/>
+    <KinBody file="side_by_side_wams_padded.kinbody.xml"/>
+    <KinBody file="pantilt.kinbody.xml"/>
+    <!-- connect the two arms with dummy joints -->
+    <joint name="leftdummy" type="hinge" enable="false">
+      <body>herb_base</body>
+      <body>/left/wam0</body>
+      <limits>0 0</limits>
+    </joint>
+    <joint name="rightdummy" type="hinge" enable="false">
+      <body>herb_base</body>
+      <body>/right/wam0</body>
+      <limits>0 0</limits>
+    </joint>
+
+    <!-- data for the orcdchomp module -->
+    <orcdchomp>
+      <spheres>
+       
+        <!-- right arm -->
+        <!-- shoulder spheres -->
+        <sphere link="/right/wam0"      pos=" 0.0    0.0  0.0 " radius="0.15" />
+        <!-- upper arm spheres -->
+        <sphere link="/right/wam2"      pos=" 0.0   -0.2  0.0 " radius="0.06" />
+        <sphere link="/right/wam2"      pos=" 0.0   -0.3  0.0 " radius="0.06" />
+        <sphere link="/right/wam2"      pos=" 0.0   -0.4  0.0 " radius="0.06" />
+        <sphere link="/right/wam2"      pos=" 0.0   -0.5  0.0 " radius="0.06" />
+        <!-- elbow knuckle spheres -->
+        <sphere link="/right/wam3"      pos=" 0.045  0.0  0.55" radius="0.06" />
+        <!-- forearm spheres -->
+        <sphere link="/right/wam4"      pos="-0.045 -0.2  0.0 " radius="0.06" />
+        <sphere link="/right/wam4"      pos="-0.045 -0.1  0.0 " radius="0.06" />
+        <sphere link="/right/wam4"      pos="-0.045 -0.3  0.0 " radius="0.06" />
+        <!-- hand sphere -->
+        <sphere link="/right/wam6"      pos=" 0.0   -0.1  0.0 " radius="0.06" />
+        <!-- finger spheres (inner links) -->
+        <sphere link="/right/finger0_1" pos=" 0.05  -0.01 0.0 " radius="0.04" />
+        <sphere link="/right/finger1_1" pos=" 0.05  -0.01 0.0 " radius="0.04" />
+        <sphere link="/right/finger2_1" pos=" 0.05  -0.01 0.0 " radius="0.04" />
+        <!-- finger spheres (tip links) -->
+        <sphere link="/right/finger0_2" pos=" 0.05   0.0  0.0 " radius="0.04" />
+        <sphere link="/right/finger1_2" pos=" 0.05   0.0  0.0 " radius="0.04" />
+        <sphere link="/right/finger2_2" pos=" 0.05   0.0  0.0 " radius="0.04" />
+      
+        <!-- left arm -->
+        <!-- shoulder spheres -->
+        <sphere link="/left/wam0"       pos=" 0.0    0.0  0.0 " radius="0.15" />
+        <!-- upper arm spheres -->
+        <sphere link="/left/wam2"       pos=" 0.0   -0.2  0.0 " radius="0.06" />
+        <sphere link="/left/wam2"       pos=" 0.0   -0.3  0.0 " radius="0.06" />
+        <sphere link="/left/wam2"       pos=" 0.0   -0.4  0.0 " radius="0.06" />
+        <sphere link="/left/wam2"       pos=" 0.0   -0.5  0.0 " radius="0.06" />
+        <!-- elbow knuckle spheres -->
+        <sphere link="/left/wam3"       pos=" 0.045  0.0  0.55" radius="0.06" />
+        <!-- forearm spheres -->
+        <sphere link="/left/wam4"       pos="-0.045 -0.2  0.0 " radius="0.06" />
+        <sphere link="/left/wam4"       pos="-0.045 -0.1  0.0 " radius="0.06" />
+        <sphere link="/left/wam4"       pos="-0.045 -0.3  0.0 " radius="0.06" />
+        <!-- hand sphere -->
+        <sphere link="/left/wam6"       pos=" 0.0   -0.1  0.0 " radius="0.06" />
+        <!-- finger spheres (inner links) -->
+        <sphere link="/left/finger0_1"  pos=" 0.05  -0.01 0.0 " radius="0.04" />
+        <sphere link="/left/finger1_1"  pos=" 0.05  -0.01 0.0 " radius="0.04" />
+        <sphere link="/left/finger2_1"  pos=" 0.05  -0.01 0.0 " radius="0.04" />
+        <!-- finger spheres (tip links) -->
+        <sphere link="/left/finger0_2"  pos=" 0.05   0.0  0.0 " radius="0.04" />
+        <sphere link="/left/finger1_2"  pos=" 0.05   0.0  0.0 " radius="0.04" />
+        <sphere link="/left/finger2_2"  pos=" 0.05   0.0  0.0 " radius="0.04" />
+      
+      </spheres>
+    </orcdchomp>
+  </KinBody>
+
+  <Manipulator name="right_wam">
+    <base>herb_base</base>
+    <effector>/right/wam7</effector>
+    <!--<armjoints>R_Shoulder_Yaw R_Shoulder_Pitch R_Shoulder_Roll R_Elbow R_Wrist_Yaw R_Wrist_Pitch R_Wrist_Roll</armjoints>-->
+    <joints>RJF1 RJF2 RJF3</joints>
+    <closingdir>1 1 1</closingdir>
+  </Manipulator>
+
+  <Manipulator name="left_wam">
+    <base>herb_base</base>
+    <effector>/left/wam7</effector>
+    <!--<armjoints>L_Shoulder_Yaw L_Shoulder_Pitch L_Shoulder_Roll L_Elbow L_Wrist_Yaw L_Wrist_Pitch L_Wrist_Roll</armjoints>-->
+    <joints>LJF1 LJF2 LJF3</joints>
+    <closingdir>1 1 1</closingdir>
+  </Manipulator>
+
+  
+</Robot>
+
