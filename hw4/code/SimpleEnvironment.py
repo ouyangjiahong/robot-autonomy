@@ -95,9 +95,8 @@ class SimpleEnvironment(object):
         w = 1
         dt = 0.5
         primitives = [Control(w,w,dt),Control(w,-w,dt),Control(w,0,dt),
-                    Control(0,w,dt),Control(-w,-w,dt),Control(w,w,dt/3),Control(w,-w,dt/3),Control(w,0,dt/3),
-                    Control(0,w,dt/3),Control(-w,-w,dt/3)]
-        #primitives = [Control(w,w,dt),Control(w,-w,dt),Control(w,w,dt/3),Control(w,-w,dt/3)]
+                    Control(0,w,dt),Control(-w,-w,dt),Control(w,w/2,dt),
+                    Control(w,-w/2,dt),Control(w/2,w,dt),Control(-w/2,w,dt)]
         # Iterate through each possible starting orientation
         for idx in range(int(self.discrete_env.num_cells[2])):
             self.actions[idx] = []
@@ -163,9 +162,7 @@ class SimpleEnvironment(object):
         # by the two node ids
         start_config = self.discrete_env.NodeIdToConfiguration(start_id)
         end_config = self.discrete_env.NodeIdToConfiguration(end_id)
-        dist_config = numpy.array(start_config)-numpy.array(end_config)
-        #dist = dist_config[0]**2 + dist_config[1]**2 + 0.1*(dist_config[2]**2)
-        dist = numpy.linalg.norm(dist_config)
+        dist = numpy.linalg.norm(numpy.array(start_config)-numpy.array(end_config))
         return dist
 
     def ComputeHeuristicCost(self, start_id, goal_id):
