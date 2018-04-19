@@ -48,7 +48,7 @@ class RoboHandler:
     self.problem_init()
 
     #order grasps based on your own scoring metric
-    self.order_grasps()
+    #self.order_grasps()
 
     #order grasps with noise
     self.order_grasps_noisy()
@@ -79,7 +79,7 @@ class RoboHandler:
 
     # create a grasping module
     self.gmodel = openravepy.databases.grasping.GraspingModel(self.robot, self.target_kinbody)
-    
+
     # if you want to set options, e.g. friction
     options = openravepy.options
     options.friction = 0.1
@@ -89,29 +89,64 @@ class RoboHandler:
     self.graspindices = self.gmodel.graspindices
     self.grasps = self.gmodel.grasps
 
-  
-  # order the grasps - call eval grasp on each, set the 'performance' index, and sort
+
   def order_grasps(self):
     self.grasps_ordered = self.grasps.copy() #you should change the order of self.grasps_ordered
+    count = 0
     for grasp in self.grasps_ordered:
-      grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
-    
+        #print count
+        count += 1
+        grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
+
     # sort!
+    #print "sort"
     order = np.argsort(self.grasps_ordered[:,self.graspindices.get('performance')[0]])
     order = order[::-1]
     self.grasps_ordered = self.grasps_ordered[order]
+    #print "show grasp"
+    # self.show_grasp(self.grasps_ordered[0], delay=10)
+    for grasp in self.grasps_ordered[:4]:
+      self.show_grasp(grasp, delay=10)
 
-  
-  # order the grasps - but instead of evaluating the grasp, evaluate random perturbations of the grasp 
+
+
+  # order the grasps - but instead of evaluating the grasp, evaluate random perturbations of the grasp
   def order_grasps_noisy(self):
-    self.grasps_ordered_noisy = self.grasps_ordered.copy() #you should change the order of self.grasps_ordered_noisy
-    #TODO set the score with your evaluation function (over random samples) and sort
+    print "Order Grasps Noisy Reached!"
+    # print "call into noisy"
+    self.grasps_ordered_noisy = self.grasps.copy() #you should change the order of self.grasps_ordered_noisy
+    sample_count = 5
+    n = 0
+    for grasp in self.grasps_ordered_noisy:
+      # Get a couple of noisy samples
+      n+=1
+      #print (n)
+      samples = []
+      for x in range(sample_count):
+        # Get a random grasp from our function below
+        noisy_grasp = self.sample_random_grasp(grasp)
+        # Evaluate it with our evaluation metric and append this to our sampled array
+        samples.append(self.eval_grasp(noisy_grasp))
+      # Average our scores from those samples and set the score of that grasp
+      grasp[self.graspindices.get('performance')] = sum(samples) / sample_count
+    # Sort the grasps based on their score
+    #print order
+    order = np.argsort(self.grasps_ordered_noisy[:,self.graspindices.get('performance')[0]])
+    order = order[::-1]
+    self.grasps_ordered_noisy = self.grasps_ordered_noisy[order]
+    # self.grasps_ordered_noisy = self.grasps_ordered_noisy[np.argsort(self.grasps_ordered_noisy[:,self.graspindices.get('performance')[0]], kind='quicksort').reverse()
+    #print "show grasp"
+    # self.show_grasp(self.grasps_ordered[0], delay=10)
+    for grasp in self.grasps_ordered_noisy[:4]:
+      self.show_grasp(grasp, delay=10)
 
+    #print "Order Grasps Noisy Finished!"
 
   # function to evaluate grasps
   # returns a score, which is some metric of the grasp
   # higher score should be a better grasp
   def eval_grasp(self, grasp):
+    # print "call into evaluation function"
     with self.robot:
       #contacts is a 2d array, where contacts[i,0-2] are the positions of contact i and contacts[i,3-5] is the direction
       try:
@@ -119,21 +154,31 @@ class RoboHandler:
 
         obj_position = self.gmodel.target.GetTransform()[0:3,3]
         # for each contact
-        G = np.array([]) #the wrench matrix
+        #G = np.array([]) #the wrench matrix
+        G = np.empty([2, 0])
         for c in contacts:
           pos = c[0:3] - obj_position
           dir = -c[3:] #this is already a unit vector
-          
-          #TODO fill G
-        
-        #TODO use G to compute scrores as discussed in class
-        return 0.0 #change this
+
+          cross = np.cross(pos, dir)
+          g = np.vstack((dir, cross))
+          #print g.shape
+          G = np.hstack((G, g))
+
+        # w, v = np.linalg.eig(np.dot(G, G.T))
+        # w = sorted(w)
+        # print w
+        # return math.sqrt(w[0]) #change this
+        # return 0
+        #another metric
+        det = np.linalg.det(np.dot(G, G.T))
+        return math.sqrt(det)
 
       except openravepy.planning_error,e:
         #you get here if there is a failure in planning
         #example: if the hand is already intersecting the object at the initial position/orientation
-        return  0.00 # TODO you may want to change this
-      
+        return  100000
+
       #heres an interface in case you want to manipulate things more specifically
       #NOTE for this assignment, your solutions cannot make use of graspingnoise
 #      self.robot.SetTransform(np.eye(4)) # have to reset transform in order to remove randomness
@@ -164,20 +209,30 @@ class RoboHandler:
     grasp = grasp_in.copy()
 
     #sample random position
-    RAND_DIST_SIGMA = 0.01 #TODO you may want to change this
+    RAND_DIST_SIGMA = 0.04
     pos_orig = grasp[self.graspindices['igrasppos']]
-    #TODO set a random position
-
+    noise_pos = np.random.normal(0,RAND_DIST_SIGMA,3)
+    #print (pos_orig)
 
     #sample random orientation
-    RAND_ANGLE_SIGMA = np.pi/24 #TODO you may want to change this
+    RAND_ANGLE_SIGMA = np.pi/20
     dir_orig = grasp[self.graspindices['igraspdir']]
+    noise_dir = np.random.normal(0,RAND_ANGLE_SIGMA,3)
+
     roll_orig = grasp[self.graspindices['igrasproll']]
-    #TODO set the direction and roll to be random
+    noise_roll = np.random.normal(0,RAND_ANGLE_SIGMA,3)
+
+
+    pos_noisy = pos_orig + noise_pos
+    roll_noisy = roll_orig + noise_roll
+    dir_noisy = dir_orig + noise_dir
+
+
+    grasp[self.graspindices['igrasppos']] = pos_noisy
+    grasp[self.graspindices['igraspdir']] = dir_noisy
+    grasp[self.graspindices['igrasproll']] = roll_noisy
 
     return grasp
-
-
   #displays the grasp
   def show_grasp(self, grasp, delay=1.5):
     with openravepy.RobotStateSaver(self.gmodel.robot):
@@ -200,5 +255,3 @@ class RoboHandler:
 if __name__ == '__main__':
   robo = RoboHandler()
   #time.sleep(10000) #to keep the openrave window open
-
-  

@@ -11,7 +11,7 @@ from AStarPlanner import AStarPlanner
 # TODO: Import the applicable RRTPlanner
 
 if __name__ == "__main__":
-    
+
     parser = argparse.ArgumentParser(description='script for testing planners')
     parser.add_argument('--test', type=int, default=1,
                         help='The test to run')
@@ -23,9 +23,9 @@ if __name__ == "__main__":
                         help='The manipulator to grasp the bottle with (right or left)')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Enable debug logging')
-    
+
     args = parser.parse_args()
-    
+
     openravepy.RaveInitialize(True, level=openravepy.DebugLevel.Info)
     openravepy.misc.InitOpenRAVELogging()
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     # Load HERB into it
     robot = env.ReadRobotXMLFile('models/robots/herb2_padded.robot.xml')
     env.Add(robot)
-        
+
     theta = -numpy.pi/4.
     robot_pose = numpy.array([[numpy.cos(theta), -numpy.sin(theta), 0, -1.25],
                               [numpy.sin(theta),  numpy.cos(theta), 0,  0.82],
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     right_manip = robot.GetManipulator('right_wam')
     robot.SetActiveDOFs(right_manip.GetArmIndices())
     robot.SetActiveDOFValues(right_relaxed)
-        
+
     left_manip = robot.GetManipulator('left_wam')
     robot.SetActiveDOFs(left_manip.GetArmIndices())
     robot.SetActiveDOFValues(left_relaxed)
@@ -75,17 +75,18 @@ if __name__ == "__main__":
     herb_base = SimpleRobot(env, robot)
     base_env = SimpleEnvironment(herb_base, resolution)
 
-    base_planner = AStarPlanner(base_env, visualize = False)
+    base_planner = AStarPlanner(base_env, visualize = True)
     arm_planner = None
     # TODO: Here initialize your arm planner
-  
+    arm_planner = RRTPlanner(arm_env, visualize=True)
+
     # add a table and move the robot into place
     table = env.ReadKinBodyXMLFile('models/objects/table.kinbody.xml')
     env.Add(table)
-    
-    table_pose = numpy.array([[ 0, 0, -1, 0.7], 
-                              [-1, 0,  0, 0], 
-                              [ 0, 1,  0, 0], 
+
+    table_pose = numpy.array([[ 0, 0, -1, 0.7],
+                              [-1, 0,  0, 0],
+                              [ 0, 1,  0, 0],
                               [ 0, 0,  0, 1]])
     table.SetTransform(table_pose)
 
@@ -106,13 +107,9 @@ if __name__ == "__main__":
         bottle_transform[1,3] = table_aabb.pos()[1] + 0.5*table_aabb.extents()[1]
 
     bottle.SetTransform(bottle_transform)
- 
+
     planner = GraspPlanner(herb.robot, base_planner, arm_planner)
     planner.PlanToGrasp(bottle)
 
     import IPython
     IPython.embed()
-
-
-        
-    
