@@ -93,10 +93,14 @@ class SimpleEnvironment(object):
         wc = [0., 0., 0.]
         grid_coordinate = self.discrete_env.ConfigurationToGridCoord(wc)
         w = 1
-        dt = 0.5
-        primitives = [Control(w,w,dt),Control(w,-w,dt),Control(w,0,dt),
-                    Control(0,w,dt),Control(-w,-w,dt),Control(w,w/2,dt),
-                    Control(w,-w/2,dt),Control(w/2,w,dt),Control(-w/2,w,dt)]
+        dt = 0.5#numpy.pi/2
+        #primitives = [Control(w,w,dt),Control(w,-w,dt),Control(w,0,dt),
+        #            Control(0,w,dt),Control(-w,-w,dt),Control(w,w/2,dt),
+        #            Control(w,-w/2,dt),Control(w/2,w,dt),Control(-w/2,w,dt)]
+        primitives = [Control(1,1,1),Control(-1,-1,1),Control(1,-1,1),Control(-1,1,1)]
+                    #]
+        #primitives = [Control(w,w,dt),Control(w,-w,dt/2),Control(-w,-w,dt),
+        #            Control(w,-w,dt/4)]
         # Iterate through each possible starting orientation
         for idx in range(int(self.discrete_env.num_cells[2])):
             self.actions[idx] = []
@@ -136,8 +140,9 @@ class SimpleEnvironment(object):
                     collide = True
                     break
             if not collide:
-                final_config = numpy.array(action.footprint[-1]).copy()
-                final_config[:2] += node_config[:2]
+                #final_config = numpy.array(action.footprint[-1]).copy()
+                #final_config[:2] += node_config[:2]
+                final_config = new_config
                 final_id = self.discrete_env.ConfigurationToNodeId(final_config)
                 successors.append({"id":final_id,"control":action.control})
         self.herb.SetCurrentConfiguration(current_config)
