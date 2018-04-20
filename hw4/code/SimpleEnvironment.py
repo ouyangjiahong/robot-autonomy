@@ -15,7 +15,7 @@ class Action(object):
         self.footprint = footprint
 
 class SimpleEnvironment(object):
-    
+
     def __init__(self, herb, resolution):
         self.herb = herb
         self.robot = herb.robot
@@ -42,7 +42,7 @@ class SimpleEnvironment(object):
             xdot = 0.5 * self.herb.wheel_radius * (ul + ur) * numpy.cos(config[2])
             ydot = 0.5 * self.herb.wheel_radius * (ul + ur) * numpy.sin(config[2])
             tdot = self.herb.wheel_radius * (ul - ur) / self.herb.wheel_distance
-                
+
             # Feed forward the velocities
             if timecount + stepsize > dt:
                 stepsize = dt - timecount
@@ -57,7 +57,7 @@ class SimpleEnvironment(object):
             footprint.append(footprint_config)
 
             timecount += stepsize
-            
+
         # Add one more config that snaps the last point in the footprint to the center of the cell
         nid = self.discrete_env.ConfigurationToNodeId(config)
         snapped_config = self.discrete_env.NodeIdToConfiguration(nid)
@@ -73,23 +73,23 @@ class SimpleEnvironment(object):
         lower_limits, upper_limits = self.boundary_limits
         pl.xlim([lower_limits[0], upper_limits[0]])
         pl.ylim([lower_limits[1], upper_limits[1]])
-        
+
         for action in actions:
             xpoints = [config[0] for config in action.footprint]
             ypoints = [config[1] for config in action.footprint]
             pl.plot(xpoints, ypoints, 'k')
-                     
+
         pl.ion()
         pl.show()
 
-        
+
 
     def ConstructActions(self):
 
         # Actions is a dictionary that maps orientation of the robot to
         #  an action set
         self.actions = dict()
-              
+
         wc = [0., 0., 0.]
         grid_coordinate = self.discrete_env.ConfigurationToGridCoord(wc)
         w = 1
@@ -102,15 +102,15 @@ class SimpleEnvironment(object):
             self.actions[idx] = []
             grid_coordinate[2] = idx
             start_config = numpy.array(self.discrete_env.GridCoordToConfiguration(grid_coordinate))
-            
+
             # TODO: Here you will construct a set of actions
             #  to be used during the planning process
             #
             for prim in primitives:
                 self.actions[idx].append(Action(prim,
                     self.GenerateFootprintFromControl(start_config,prim)))
-            
-            
+
+
 
     def GetSuccessors(self, node_id):
 
@@ -157,7 +157,7 @@ class SimpleEnvironment(object):
 
         dist = 0
 
-        # TODO: Here you will implement a function that 
+        # TODO: Here you will implement a function that
         # computes the distance between the configurations given
         # by the two node ids
         start_config = self.discrete_env.NodeIdToConfiguration(start_id)
@@ -166,13 +166,12 @@ class SimpleEnvironment(object):
         return dist
 
     def ComputeHeuristicCost(self, start_id, goal_id):
-        
+
         cost = 0
 
-        # TODO: Here you will implement a function that 
+        # TODO: Here you will implement a function that
         # computes the heuristic cost between the configurations
         # given by the two node ids
         cost = self.ComputeDistance(start_id,goal_id)
-        
-        return cost
 
+        return cost
