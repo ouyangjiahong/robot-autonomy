@@ -162,7 +162,9 @@ class SimpleEnvironment(object):
         # by the two node ids
         start_config = self.discrete_env.NodeIdToConfiguration(start_id)
         end_config = self.discrete_env.NodeIdToConfiguration(end_id)
-        dist = numpy.linalg.norm(numpy.array(start_config)-numpy.array(end_config))
+        # print((numpy.array(start_config)-numpy.array(end_config))*numpy.array([1,1,0.25]))
+        # print(end_config)
+        dist = numpy.linalg.norm((numpy.array(start_config)-numpy.array(end_config))*numpy.array([1,1,0.25]))
         return dist
 
     def ComputeHeuristicCost(self, start_id, goal_id):

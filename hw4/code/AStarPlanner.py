@@ -1,6 +1,7 @@
 from heapq import *
 import time
 from SimpleEnvironment import Action
+import numpy as np
 
 class AStarPlanner(object):
 
@@ -74,8 +75,8 @@ class AStarPlanner(object):
                         #c1 = self.planning_env.discrete_env.NodeIdToConfiguration(curr)
                         #c2 = self.planning_env.discrete_env.NodeIdToConfiguration(sid)
                         #self.planning_env.PlotEdge(c1,c2)
-        import IPython
-        IPython.embed()
+        # import IPython
+        # IPython.embed()
 
         if found:
             n = goal_id
@@ -83,7 +84,7 @@ class AStarPlanner(object):
                 n,ctrl = parent[n]["id"],parent[n]["control"]
                 ncfg = self.planning_env.discrete_env.NodeIdToConfiguration(n)
                 action = Action(ctrl,self.planning_env.GenerateFootprintFromControl(np.array(ncfg),ctrl))
-                plan.append(action)                
+                plan.append(action)
             #plan.append(start_config)
         plan = plan[::-1]
         #print("Plan: ",plan)
@@ -96,7 +97,7 @@ class AStarPlanner(object):
         print("Path Length: ",len(plan))
         print("Number of Nodes Expanded: ",numexpand)
 
-        import IPython
-        IPython.embed()
+        # import IPython
+        # IPython.embed()
 
         return plan

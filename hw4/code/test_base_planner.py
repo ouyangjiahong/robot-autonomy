@@ -21,20 +21,20 @@ if __name__ == "__main__":
     right_manip = robot.GetManipulator('right_wam')
     robot.SetActiveDOFs(right_manip.GetArmIndices())
     robot.SetActiveDOFValues(right_relaxed)
-        
+
     left_manip = robot.GetManipulator('left_wam')
     robot.SetActiveDOFs(left_manip.GetArmIndices())
     robot.SetActiveDOFValues(left_relaxed)
 
     robot.controller = openravepy.RaveCreateController(robot.GetEnv(), 'IdealController')
-     
+
     # add a table and move the robot into place
     table = env.ReadKinBodyXMLFile('models/objects/table.kinbody.xml')
     env.Add(table)
-    
-    table_pose = numpy.array([[ 0, 0, -1, 0.7], 
-                              [-1, 0,  0, 0], 
-                              [ 0, 1,  0, 0], 
+
+    table_pose = numpy.array([[ 0, 0, -1, 0.7],
+                              [-1, 0,  0, 0],
+                              [ 0, 1,  0, 0],
                               [ 0, 0,  0, 1]])
     table.SetTransform(table_pose)
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     tstart = robot.GetTransform()
     hstart = openravepy.misc.DrawAxes(env, tstart)
     hstart.SetShow(True)
-    
+
 
     raw_input('Move robot to goal config and press enter')
     gid = base_env.discrete_env.ConfigurationToNodeId(herb_base.GetCurrentConfiguration())
@@ -65,8 +65,10 @@ if __name__ == "__main__":
 
     #import IPython
     #IPython.embed()
-    
+
     planner = AStarPlanner(base_env, visualize=False)
+    # start_config = numpy.array([-1.25, 0.82, -0.785])
+    # goal_config = numpy.array([0.15, -0.95, 0.01])
     plan = planner.Plan(start_config, goal_config)
     traj = herb_base.ConvertPlanToTrajectory(plan)
 
@@ -74,7 +76,3 @@ if __name__ == "__main__":
     herb_base.ExecuteTrajectory(traj)
 
     raw_input('Press any key to quit.')
-
-    
-    
-    

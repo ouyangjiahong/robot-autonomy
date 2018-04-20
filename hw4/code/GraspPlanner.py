@@ -33,7 +33,11 @@ class GraspPlanner(object):
         if not self.irmodel.load():
             print("fail to load irmodel")
 
-        base_init = self.base_planner.planning_env.herb.GetCurrentConfiguration()
+        base_config = self.base_planner.planning_env.herb.GetCurrentConfiguration()
+        print(base_config)
+        base_id = self.base_planner.planning_env.discrete_env.ConfigurationToNodeId(base_config)
+        base_init = self.base_planner.planning_env.discrete_env.NodeIdToConfiguration(base_id)
+        print(base_init)
         grasp_init = self.robot.GetActiveDOFValues()
 
         print("searching for valid base pose and grasp")
@@ -44,7 +48,7 @@ class GraspPlanner(object):
             densityfn, samplerfn, bounds = self.irmodel.computeBaseDistribution(Tgrasp)
             goals = []
             numfailures = 0
-            N = 100
+            N = 1
             starttime = time.time()
             timeout = 10
             with self.robot:
@@ -61,6 +65,8 @@ class GraspPlanner(object):
                         self.robot.SetTransform(pose)
                         self.robot.SetDOFValues(*jointstate)
                         # validate that base is not in collision
+                        if self.robot.GetEnv().CheckCollision(self.robot):
+                            continue
                         if not self.manip.CheckIndependentCollision(openravepy.CollisionReport()):
                             q = self.manip.FindIKSolution(Tgrasp,filteroptions=openravepy.IkFilterOptions.CheckEnvCollisions.IgnoreEndEffectorCollisions)
                             # print(q)
@@ -83,7 +89,13 @@ class GraspPlanner(object):
         Tgrasp, pose, values = goals[idx]
         self.robot.SetTransform(pose)
         self.robot.SetDOFValues(values)
-        base_pose = numpy.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
+        # base_pose = numpy.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
+        base_config = self.base_planner.planning_env.herb.GetCurrentConfiguration()
+        print(base_config)
+        base_id = self.base_planner.planning_env.discrete_env.ConfigurationToNodeId(base_config)
+        base_pose = self.base_planner.planning_env.discrete_env.NodeIdToConfiguration(base_id)
+        print(base_pose)
+
         grasp_config = numpy.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
 
         self.base_planner.planning_env.herb.SetCurrentConfiguration(base_init)
@@ -162,7 +174,6 @@ class GraspPlanner(object):
 
         # Next select a pose for the base and an associated ik for the arm
         base_pose, grasp_config = self.GetBasePoseForObjectGrasp(obj)
-        pdb.set_trace()
 
         if base_pose is None or grasp_config is None:
             print 'Failed to find solution'
@@ -171,6 +182,7 @@ class GraspPlanner(object):
         # Now plan to the base pose
         start_pose = numpy.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
         pdb.set_trace()
+        print('start plan for base')
         base_plan = self.base_planner.Plan(start_pose, base_pose)
         base_traj = self.base_planner.planning_env.herb.ConvertPlanToTrajectory(base_plan)
 
@@ -178,6 +190,7 @@ class GraspPlanner(object):
         self.base_planner.planning_env.herb.ExecuteTrajectory(base_traj)
 
         # Now plan the arm to the grasp configuration
+        print('start plan for grasp')
         start_config = numpy.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
         arm_plan = self.arm_planner.Plan(start_config, grasp_config)
         arm_traj = self.arm_planner.planning_env.herb.ConvertPlanToTrajectory(arm_plan)
