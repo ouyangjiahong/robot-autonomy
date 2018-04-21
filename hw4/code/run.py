@@ -4,13 +4,15 @@ import argparse, numpy, openravepy, time
 import pdb
 
 from HerbRobot import HerbRobot
-from HerbEnvironment import HerbEnvironment
+# from HerbEnvironment import HerbEnvironment
+from HerbEnvironment_our import HerbEnvironment
 from SimpleRobot import SimpleRobot
 from SimpleEnvironment import SimpleEnvironment
 from GraspPlanner import GraspPlanner
 from AStarPlanner import AStarPlanner
 # TODO: Import the applicable RRTPlanner
-from RRTPlanner import RRTPlanner
+from RRTPlanner_our import RRTPlanner
+from RRTConnectPlanner_our import RRTConnectPlanner
 
 if __name__ == "__main__":
 
@@ -78,11 +80,12 @@ if __name__ == "__main__":
     herb_base = SimpleRobot(env, robot)
     base_env = SimpleEnvironment(herb_base, resolution)
 
-    visualize = True
+    visualize = False
     base_planner = AStarPlanner(base_env, visualize=visualize)
     arm_planner = None
     # TODO: Here initialize your arm planner
-    arm_planner = RRTPlanner(arm_env, visualize=visualize)
+    # arm_planner = RRTPlanner(arm_env, visualize=visualize)
+    arm_planner = RRTConnectPlanner(arm_env, visualize=visualize)
 
     # add a table and move the robot into place
     table = env.ReadKinBodyXMLFile('models/objects/table.kinbody.xml')

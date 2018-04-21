@@ -6,10 +6,10 @@ class RRTPlanner(object):
     def __init__(self, planning_env, visualize):
         self.planning_env = planning_env
         self.visualize = visualize
-        
+
 
     def Plan(self, start_config, goal_config, epsilon = 0.001):
-        
+
         tree = RRTTree(self.planning_env, start_config)
         plan = []
         plotedge = False
@@ -21,8 +21,8 @@ class RRTPlanner(object):
         #  of dimension k x n where k is the number of waypoints
         #  and n is the dimension of the robots configuration space
 
-        self.planning_env.SetGoalParameters(goal_config)
-        
+        self.planning_env.SetGoalParameters(goal_config, p=0.5)
+
         while True:
             if numpy.random.rand()>self.planning_env.p:
                 qr = self.planning_env.GenerateRandomConfiguration()
@@ -37,7 +37,7 @@ class RRTPlanner(object):
                 #plan.append(qc)
                 if plotedge:
                     self.planning_env.PlotEdge(qn,qc)
-		dist = self.planning_env.ComputeDistance(qc,goal_config)
+                dist = self.planning_env.ComputeDistance(qc,goal_config)
                 if (dist<=epsilon and reached):
                     goal_id = qc_id
                     break
