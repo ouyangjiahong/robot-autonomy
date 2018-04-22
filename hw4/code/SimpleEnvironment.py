@@ -93,7 +93,7 @@ class SimpleEnvironment(object):
         wc = [0., 0., 0.]
         grid_coordinate = self.discrete_env.ConfigurationToGridCoord(wc)
         w = 1
-        dt = 0.5
+        dt = 1
         primitives = [Control(w,w,dt),Control(w,-w,dt),Control(w,0,dt),
                     Control(0,w,dt),Control(-w,-w,dt),Control(w,w/2,dt),
                     Control(w,-w/2,dt),Control(w/2,w,dt),Control(-w/2,w,dt)]
@@ -141,13 +141,15 @@ class SimpleEnvironment(object):
                 final_id = self.discrete_env.ConfigurationToNodeId(final_config)
                 successors.append({"id":final_id,"control":action.control})
         self.herb.SetCurrentConfiguration(current_config)
+        # print(successors)
         return successors
 
     def CheckCollisionAndLimits(self,config):
         #print "checking config: ",config
-        old_config = self.herb.GetCurrentConfiguration()
-        self.herb.SetCurrentConfiguration(config)
-        is_not_colliding = not (self.herb.robot.GetEnv().CheckCollision(self.herb.robot))#or self.herb.robot.CheckSelfCollision())
+        with self.herb.robot:
+            # old_config = self.herb.GetCurrentConfiguration()
+            self.herb.SetCurrentConfiguration(config)
+            is_not_colliding = not (self.herb.robot.GetEnv().CheckCollision(self.herb.robot))#or self.herb.robot.CheckSelfCollision())
         lb = (config >= (numpy.array(self.boundary_limits[0])-numpy.array(self.resolution))).all()
         ub = (config <= (numpy.array(self.boundary_limits[1])-numpy.array(self.resolution))).all()
         return is_not_colliding and lb and ub

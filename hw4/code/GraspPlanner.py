@@ -191,16 +191,19 @@ class GraspPlanner(object):
         self.base_planner.planning_env.herb.SetCurrentConfiguration(start_pose)
         # pdb.set_trace()
         print('start plan for base')
+        print(base_pose)
         base_plan = self.base_planner.Plan(start_pose, base_pose)
         base_traj = self.base_planner.planning_env.herb.ConvertPlanToTrajectory(base_plan)
 
         print 'Executing base trajectory'
         self.base_planner.planning_env.herb.ExecuteTrajectory(base_traj)
+        print self.base_planner.planning_env.herb.GetCurrentConfiguration()
 
         # Now plan the arm to the grasp configuration
+
+        start_config = numpy.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
         print('start plan for grasp')
         raw_input('plan for grasp')
-        start_config = numpy.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
         arm_plan = self.arm_planner.Plan(start_config, grasp_config)
         print('after plan')
         arm_traj = self.arm_planner.planning_env.herb.ConvertPlanToTrajectory(arm_plan)

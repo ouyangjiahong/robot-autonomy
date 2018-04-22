@@ -43,7 +43,7 @@ class AStarPlanner(object):
                 print("No Path Found")
                 break
             curr = heappop(tovisit)[1]
-            print("curr: ",curr)
+            # print("curr: ",curr)
             numexpand = numexpand + 1
             if curr == goal_id:
                 found=True
@@ -51,7 +51,7 @@ class AStarPlanner(object):
                 break
             visited.append(curr)
             succ = self.planning_env.GetSuccessors(curr)
-            #print("successors: ",succ)
+            # print("successors: ",succ)
             for s in succ:
                 sid = s["id"]
                 sctrl = s["control"]
