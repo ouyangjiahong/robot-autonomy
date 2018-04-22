@@ -24,10 +24,13 @@ class RRTConnectPlanner(object):
         self.planning_env.SetGoalParameters(goal_config)
 
         while True:
+            print("generating random config")
             qr = self.planning_env.GenerateRandomConfiguration()
 
             fqn_id,fqn = ftree.GetNearestVertex(qr)
-            freached,fqc = self.planning_env.Extend(fqn,qr,step=epsilon)
+            print("going into extend")
+            # freached,fqc = self.planning_env.Extend(fqn,qr,step=epsilon)
+            freached,fqc = self.planning_env.Extend(fqn,qr)
 
             if fqc is not None: # not Trapped
                 fqc_id = ftree.AddVertex(fqc)
@@ -36,7 +39,9 @@ class RRTConnectPlanner(object):
                     self.planning_env.PlotEdge(fqn,fqc)
 
                 rqn_id,rqn = rtree.GetNearestVertex(fqc)
-                rreached,rqc = self.planning_env.Extend(rqn,fqc,step=epsilon)
+                print("going into extend")
+                # rreached,rqc = self.planning_env.Extend(rqn,fqc,step=epsilon)
+                rreached,rqc = self.planning_env.Extend(rqn,fqc)
                 if rqc is not None:
                     rqc_id = rtree.AddVertex(rqc)
                     rtree.AddEdge(rqn_id,rqc_id)

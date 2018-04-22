@@ -4,15 +4,14 @@ import argparse, numpy, openravepy, time
 import pdb
 
 from HerbRobot import HerbRobot
-# from HerbEnvironment import HerbEnvironment
-from HerbEnvironment_our import HerbEnvironment
+from HerbEnvironment import HerbEnvironment
 from SimpleRobot import SimpleRobot
 from SimpleEnvironment import SimpleEnvironment
 from GraspPlanner import GraspPlanner
 from AStarPlanner import AStarPlanner
 # TODO: Import the applicable RRTPlanner
-from RRTPlanner_our import RRTPlanner
-from RRTConnectPlanner_our import RRTConnectPlanner
+# from RRTPlanner_our import RRTPlanner
+from RRTConnectPlanner import RRTConnectPlanner
 
 if __name__ == "__main__":
 

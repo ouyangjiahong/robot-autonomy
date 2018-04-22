@@ -85,6 +85,7 @@ class AStarPlanner(object):
                 ncfg = self.planning_env.discrete_env.NodeIdToConfiguration(n)
                 action = Action(ctrl,self.planning_env.GenerateFootprintFromControl(np.array(ncfg),ctrl))
                 plan.append(action)
+                print(ncfg)
             #plan.append(start_config)
         plan = plan[::-1]
         #print("Plan: ",plan)
